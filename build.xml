@@ -1,0 +1,43 @@
+<project name="spring-boot-ant" default="war" basedir=".">
+    <!-- Define properties -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="war"/>
+    <property name="lib.dir" value="lib"/>
+
+    <!-- Clean target to remove old build files -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile the Java files using the JAR files in the lib/ directory -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}/classes"/>
+        <javac srcdir="${src.dir}/main/java" destdir="${build.dir}/classes" includeantruntime="false">
+            <!-- Classpath to include all the JAR files from the lib directory -->
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Package the application into a WAR file -->
+    <target name="war" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <war destfile="${dist.dir}/spring-boot-ant.war">
+            <!-- Include compiled classes -->
+            <fileset dir="${build.dir}/classes"/>
+            <!-- Include resources like HTML and application.properties -->
+            <fileset dir="${src.dir}/main/resources"/>
+            <!-- Include web.xml file -->
+            <fileset dir="${src.dir}/main/webapp">
+                <include name="WEB-INF/web.xml"/>
+            </fileset>
+            <!-- Include all JARs in lib directory -->
+            <lib dir="${lib.dir}"/>
+        </war>
+    </target>
+</project>
